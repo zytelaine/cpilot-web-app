@@ -51,7 +51,6 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         messages: conversation?.messages || [],
       };
     case 'ADD_MESSAGE':
-      // console.log('🔄 状态更新：添加新消息', action.payload);
       return {
         ...state,
         messages: [...state.messages, action.payload],
@@ -151,8 +150,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         const assistantMessage: Message = {
           id: Date.now().toString(), 
           role: 'assistant',         
-          content: "123456789", 
-          // content: logData.assistant, 
+          content: logData.assistant, 
           timestamp: new Date().toISOString() 
         };
 
