@@ -9,6 +9,15 @@ interface ChatState {
   isProcessing: boolean;
 }
 
+
+export interface LogData {
+  round: number;
+  user: string;
+  assistant: string;
+  tool_calls: any[];
+  completed?: boolean;
+}
+
 type ChatAction =
   | { type: 'CREATE_CONVERSATION'; payload: Conversation }
   | { type: 'SET_CURRENT_CONVERSATION'; payload: string }
@@ -42,6 +51,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         messages: conversation?.messages || [],
       };
     case 'ADD_MESSAGE':
+      // console.log('🔄 状态更新：添加新消息', action.payload);
       return {
         ...state,
         messages: [...state.messages, action.payload],
@@ -112,7 +122,7 @@ interface ChatProviderProps {
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
-
+  
   const createNewChat = () => {
     const newConversation: Conversation = {
       id: Date.now().toString(),
@@ -135,8 +145,30 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     dispatch({ type: 'SET_PROCESSING', payload: true });
 
     try {
-      // 调用 cPilot 服务
-      const response: CpilotResponse = await cpilotService.sendMessage(content);
+
+      const logHandler = (logData: LogData) => {
+        console.log("logHandler")
+        const assistantMessage: Message = {
+          id: Date.now().toString(), 
+          role: 'assistant',         
+          content: "123456789", 
+          // content: logData.assistant, 
+          timestamp: new Date().toISOString() 
+        };
+
+        dispatch({ 
+          type: 'ADD_MESSAGE', 
+          payload: assistantMessage 
+        });
+      };
+
+      cpilotService.onLogReceived(logHandler);
+
+      const response: CpilotResponse = await cpilotService.sendMessage(
+        content, 
+        'run_qwen_zh', 
+        'cpilot' // 指定使用cPilot模型，确保走WebSocket日志流程
+      );
       
       if (response.status.includes('Success')) {
         const assistantMessage: Message = {
