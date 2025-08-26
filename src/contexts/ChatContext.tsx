@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { Message, Conversation } from '../types/chat';
 import cpilotService, { CpilotResponse } from '../services/cpilotService';
+import { useModel } from '../contexts/ModelContext';
 
 interface ChatState {
   conversations: Conversation[];
@@ -121,7 +122,8 @@ interface ChatProviderProps {
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
-  
+  const { selectedModel } = useModel();
+
   const createNewChat = () => {
     const newConversation: Conversation = {
       id: Date.now().toString(),
@@ -146,7 +148,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     try {
 
       const logHandler = (logData: LogData) => {
-        console.log("logHandler")
         const assistantMessage: Message = {
           id: Date.now().toString(), 
           role: 'assistant',         
@@ -164,7 +165,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
       const response: CpilotResponse = await cpilotService.sendMessage(
         content, 
-        'run_qwen_zh', 
+        selectedModel, 
         'cpilot' // 指定使用cPilot模型，确保走WebSocket日志流程
       );
       

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useModel, ModelId } from '../contexts/ModelContext'
 
 const ModelSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('run');
+  const { selectedModel, setSelectedModel } = useModel();
 
   const models = [
     { id: 'run', name: 'OpenAI Default', description: '默认OpenAI模型协作模式', color: 'cpilot' },
@@ -59,7 +60,7 @@ const ModelSelector: React.FC = () => {
                   <button
                     key={model.id}
                     onClick={() => {
-                      setSelectedModel(model.id);
+                      setSelectedModel(model.name as ModelId);
                       setIsOpen(false);
                     }}
                     className={`w-full text-left p-4 rounded-xl border transition-all duration-200 hover:scale-105 ${
