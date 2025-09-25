@@ -6,7 +6,6 @@
 预留服务端向客户端发送信息API：
 
 import importlib
-# 动态导入包含横杠的模块
 cpilot_local_server = importlib.import_module("cpilot-web-app.cPilot_local_server")
 log_manager = cpilot_local_server.log_manager
 
