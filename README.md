@@ -14,7 +14,9 @@ npm run dev
 # 预留服务端向客户端发送信息API：
 
 import importlib 
+
 cpilot_local_server = importlib.import_module("cpilot-web-app.cPilot_local_server") 
+
 log_manager = cpilot_local_server.log_manager
 
 log_manager.info(None, {"assistant":your_message}, True)
